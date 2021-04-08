@@ -79,6 +79,7 @@ function FileBuilder()
 	}
 }
 
+
 // A function following the Visitor pattern.
 // Annotates nodes with parent objects.
 function traverseWithParents(object, visitor)
@@ -99,6 +100,22 @@ function traverseWithParents(object, visitor)
     }
 }
 
+function decisionCounter(node)
+{
+    var max = 0,
+    ifstatement = false;
+		traverseWithParents(node, function (node) {
+		if (node.type === "IfStatement") ifstatement = true;
+		if (node.type === "LogicalExpression" &&(node.operator === "||" || node.operator === "&&"))
+			max++;
+		});
+
+		if(max === 0 && ifstatement){
+		return 1
+		}
+		return max;
+}
+
 function complexity(filePath)
 {
 	var buf = fs.readFileSync(filePath, "utf8");
@@ -113,20 +130,37 @@ function complexity(filePath)
 	builders[filePath] = fileBuilder;
 
 	// Tranverse program with a function visitor.
-	traverseWithParents(ast, function (node) 
-	{
+	traverseWithParents(ast, function (node) {
+
 		if (node.type === 'FunctionDeclaration') 
 		{
 			var builder = new FunctionBuilder();
 
 			builder.FunctionName = functionName(node);
 			builder.StartLine    = node.loc.start.line;
+			var max = 0;
+
+			traverseWithParents(node, function (node) {
+				if (isDecision(node)) {
+					builder.SimpleCyclomaticComplexity += 1;
+
+					if (decisionCounter(node) > max) {
+						max = decisionCounter(node);
+					} 
+				}
+			});
+
+			builder.MaxConditions = max;
 
 			builders[builder.FunctionName] = builder;
+
+			builder.ParameterCount = node.params.length;
 		}
 
+		if (node.type === "Literal") {
+			fileBuilder.Strings += 1;
+		}
 	});
-
 }
 
 // Helper function for counting children of node.

@@ -16,6 +16,8 @@ function main()
 	
 	complexity(filePath);
 
+	getStrings();
+
 	// Report
 	for( var node in builders )
 	{
@@ -81,7 +83,6 @@ function FileBuilder()
 	}
 }
 
-
 // A function following the Visitor pattern.
 // Annotates nodes with parent objects.
 function traverseWithParents(object, visitor)
@@ -113,10 +114,12 @@ function decisionCounter(node)
 		});
 
 		if(max === 0 && ifstatement){
-		return 1
+			return 1
 		}
 		return max;
 }
+
+var stringCount = 0
 
 function complexity(filePath)
 {
@@ -133,6 +136,10 @@ function complexity(filePath)
 
 	// Tranverse program with a function visitor.
 	traverseWithParents(ast, function (node) {
+
+		if (node.type === "Literal") {
+			fileBuilder.Strings += 1;
+		}
 
 		if (node.type === 'FunctionDeclaration') 
 		{
@@ -158,11 +165,14 @@ function complexity(filePath)
 
 			builder.ParameterCount = node.params.length;
 		}
-
-		if (node.type === "Literal") {
-			fileBuilder.Strings += 1;
-		}
 	});
+	stringCount = fileBuilder.Strings;
+}
+
+function getStrings() {
+
+	console.log(stringCount);
+	return stringCount;
 }
 
 // Helper function for counting children of node.
@@ -311,4 +321,5 @@ remainder.toString() + " seconds";
 mints.toString().split(".")[0] + " " + szmin;
       }
   }
- exports.complexity = complexity;
+exports.complexity = complexity;
+exports.getStrings = getStrings;

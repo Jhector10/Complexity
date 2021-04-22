@@ -1,5 +1,7 @@
 # Complexity & Travis-CI Lab
 
+[![build status of mmain](https://travis-ci.org/Jhector10/Complexity.svg?branch=main)](https://travis-ci.org/Jhector10/Complexity)
+
 In this lab, you'll be implementing simple algorithms for checking basic properties of code complexity, and working with Travis-CI for Continuous Integration.
 
 Two design patterns are of importance here:

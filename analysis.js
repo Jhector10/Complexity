@@ -2,6 +2,8 @@ var esprima = require("esprima");
 var options = {tokens:true, tolerant: true, loc: true, range: true };
 var fs = require("fs");
 
+// Redid the lab in order to send in a comment
+
 function main()
 {
 	var args = process.argv.slice(2);
